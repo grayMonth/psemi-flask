@@ -1,0 +1,4 @@
+# githubにuploadしないものを指定する
+__pycache__/
+venv/
+instance/
