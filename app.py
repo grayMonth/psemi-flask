@@ -31,5 +31,18 @@ def delete(id):
     db.session.commit()
     return redirect('/')
 
+@app.route("/edit/<int:id>", methods=["GET"])
+def edit(id):
+    task = Todo.query.get(id)
+    return render_template("edit.html", task=task)
+
+@app.route("/update/<int:id>", methods=["POST"])
+def update(id):
+    task = Todo.query.get(id)
+    task.title = request.form.get("title")
+    task.details = request.form.get("details")
+    db.session.commit()
+    return redirect("/")
+
 if __name__ == "__main__":
     app.run(debug=True)
