@@ -9,6 +9,7 @@ class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     details = db.Column(db.String(100), nullable=True)
+    done = db.Column(db.Boolean, default=False)
 
 @app.route("/")
 def index():
@@ -26,22 +27,30 @@ def create():
 
 @app.route('/delete/<int:id>')
 def delete(id):
-    delete_task = Todo.query.get(id)
+    delete_task = db.session.get(Todo, id)
     db.session.delete(delete_task)
     db.session.commit()
     return redirect('/')
 
 @app.route("/edit/<int:id>", methods=["GET"])
 def edit(id):
-    task = Todo.query.get(id)
+    task = db.session.get(Todo, id)
     return render_template("edit.html", task=task)
 
 @app.route("/update/<int:id>", methods=["POST"])
 def update(id):
-    task = Todo.query.get(id)
+    task = db.session.get(Todo, id)
     task.title = request.form.get("title")
     task.details = request.form.get("details")
     db.session.commit()
+    return redirect("/")
+
+@app.route("/toggle/<int:id>")
+def toggle(id):
+    task = db.session.get(Todo, id)
+    if task:
+        task.done = not task.done
+        db.session.commit()
     return redirect("/")
 
 if __name__ == "__main__":
